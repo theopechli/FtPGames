@@ -13,10 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.theopechli.ftpgames.model.Game
 import com.theopechli.ftpgames.ui.screens.GamesUiState
 import com.theopechli.ftpgames.ui.theme.FtPGamesTheme
@@ -65,6 +68,7 @@ fun GamesList(
             key = { game ->
                 game.title
                 game.shortDescription
+                game.thumbnail
             }
         ) { game ->
             GameListItem(
@@ -96,9 +100,14 @@ fun GameListItem(
                     .size(128.dp)
                     .clip(RoundedCornerShape(2.dp))
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.thumbnail),
-                    contentDescription = "Game thumbnail",
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(game.thumbnail)
+                        .crossfade(true)
+                        .build(),
+                    error = painterResource(R.drawable.ic_launcher_foreground),
+                    placeholder = painterResource(R.drawable.ic_launcher_foreground),
+                    contentDescription = "${game.title} thumbnail",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .aspectRatio(1f)
