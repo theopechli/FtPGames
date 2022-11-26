@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.theopechli.ftpgames.GamesApplication
-import com.theopechli.ftpgames.data.GameDatabase
 import com.theopechli.ftpgames.data.GamesRepository
 import com.theopechli.ftpgames.model.Game
 import com.theopechli.ftpgames.model.GameDao
@@ -27,7 +26,7 @@ sealed interface GamesUiState {
 class GamesViewModel(
     private val gamesRepository: GamesRepository,
     private val gameDao: GameDao
-    ) : ViewModel() {
+) : ViewModel() {
     var gamesUiState: GamesUiState by mutableStateOf(GamesUiState.Loading)
         private set
 
@@ -40,11 +39,10 @@ class GamesViewModel(
             gamesUiState = GamesUiState.Loading
             var games = gameDao.getAll()
             gamesUiState = try {
-                if (games.isNotEmpty()) {
-                    GamesUiState.Success(games)
+                if (games.isEmpty()) {
+                    games = gamesRepository.getGames()
+                    gameDao.insertAll(games)
                 }
-                games = gamesRepository.getGames()
-                gameDao.insertAll()
                 GamesUiState.Success(games)
             } catch (e: IOException) {
                 GamesUiState.Error
@@ -59,7 +57,7 @@ class GamesViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as GamesApplication)
                 val gamesRepository = application.container.gamesRepository
-                val gameDatabase = GameDatabase.getDatabase(application)
+                val gameDatabase = application.container.gameDatabase
                 val gameDao = gameDatabase.gameDao()
                 GamesViewModel(gamesRepository = gamesRepository, gameDao = gameDao)
             }

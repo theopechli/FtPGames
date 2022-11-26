@@ -9,7 +9,7 @@ import com.theopechli.ftpgames.model.GameDao
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
-@Database(entities = [Game::class], version = 1)
+@Database(entities = [Game::class], version = 1, exportSchema = false)
 abstract class GameDatabase : RoomDatabase() {
 
     abstract fun gameDao(): GameDao
@@ -27,7 +27,7 @@ abstract class GameDatabase : RoomDatabase() {
                     "game_database"
                 ).build()
                 INSTANCE = instance
-                instance
+                return instance
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.theopechli.ftpgames.data
 
+import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.theopechli.ftpgames.network.GamesApiService
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -9,9 +10,10 @@ import retrofit2.Retrofit
 
 interface AppContainer {
     val gamesRepository: GamesRepository
+    val gameDatabase: GameDatabase
 }
 
-class DefaultAppContainer() : AppContainer {
+class DefaultAppContainer(context: Context) : AppContainer {
     private val BASE_URL = "https://www.freetogame.com/api/"
 
     @ExperimentalSerializationApi
@@ -26,5 +28,9 @@ class DefaultAppContainer() : AppContainer {
 
     override val gamesRepository: GamesRepository by lazy {
         DefaultGamesRepository(retrofitService)
+    }
+
+    override val gameDatabase: GameDatabase by lazy {
+        GameDatabase.getDatabase(context)
     }
 }
