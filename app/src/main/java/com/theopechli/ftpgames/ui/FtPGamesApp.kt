@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.theopechli.ftpgames.HomeScreen
+import com.theopechli.ftpgames.ui.screens.HomeScreen
 import com.theopechli.ftpgames.R
 import com.theopechli.ftpgames.ui.screens.GamesViewModel
 

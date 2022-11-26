@@ -1,8 +1,7 @@
-package com.theopechli.ftpgames
+package com.theopechli.ftpgames.ui.screens
 
 import android.content.res.Configuration
 import androidx.compose.animation.*
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.theopechli.ftpgames.R
 import com.theopechli.ftpgames.model.Game
-import com.theopechli.ftpgames.ui.screens.GamesUiState
 import com.theopechli.ftpgames.ui.theme.FtPGamesTheme
 
 @Composable
