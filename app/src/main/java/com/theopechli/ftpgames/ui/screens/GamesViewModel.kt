@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.theopechli.ftpgames.GamesApplication
+import com.theopechli.ftpgames.data.GameDatabase
 import com.theopechli.ftpgames.data.GamesRepository
 import com.theopechli.ftpgames.model.Game
 import com.theopechli.ftpgames.model.GameDao
@@ -58,8 +59,8 @@ class GamesViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as GamesApplication)
                 val gamesRepository = application.container.gamesRepository
-                val gameRoomDatabase = application.container.gameRoomDatabase
-                val gameDao = gameRoomDatabase.gameDao()
+                val gameDatabase = GameDatabase.getDatabase(application)
+                val gameDao = gameDatabase.gameDao()
                 GamesViewModel(gamesRepository = gamesRepository, gameDao = gameDao)
             }
         }

@@ -10,19 +10,20 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
 @Database(entities = [Game::class], version = 1)
-abstract class GameRoomDatabase : RoomDatabase() {
+abstract class GameDatabase : RoomDatabase() {
+
     abstract fun gameDao(): GameDao
 
     companion object {
         @Volatile
-        private var INSTANCE: GameRoomDatabase? = null
+        private var INSTANCE: GameDatabase? = null
 
         @OptIn(InternalCoroutinesApi::class)
-        fun getDatabase(context: Context) : GameRoomDatabase {
+        fun getDatabase(context: Context) : GameDatabase {
             return INSTANCE ?: synchronized(this) {
-                val instance: GameRoomDatabase = Room.databaseBuilder(
+                val instance: GameDatabase = Room.databaseBuilder(
                     context.applicationContext,
-                    GameRoomDatabase::class.java,
+                    GameDatabase::class.java,
                     "game_database"
                 ).build()
                 INSTANCE = instance
