@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.theopechli.ftpgames.GamesApplication
 import com.theopechli.ftpgames.data.GamesRepository
 import com.theopechli.ftpgames.model.Game
+import com.theopechli.ftpgames.model.GameDao
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -22,19 +23,28 @@ sealed interface GamesUiState {
     object Loading : GamesUiState
 }
 
-class GamesViewModel(private val gamesRepository: GamesRepository) : ViewModel() {
+class GamesViewModel(
+    private val gamesRepository: GamesRepository,
+    private val gameDao: GameDao
+    ) : ViewModel() {
     var gamesUiState: GamesUiState by mutableStateOf(GamesUiState.Loading)
         private set
 
     init {
-        getGames()
+        getGames(gameDao)
     }
 
-    fun getGames() {
+    private fun getGames(gameDao: GameDao) {
         viewModelScope.launch {
             gamesUiState = GamesUiState.Loading
+            var games = gameDao.getAll()
             gamesUiState = try {
-                GamesUiState.Success(gamesRepository.getGames())
+                if (games.isNotEmpty()) {
+                    GamesUiState.Success(games)
+                }
+                games = gamesRepository.getGames()
+                gameDao.insertAll()
+                GamesUiState.Success(games)
             } catch (e: IOException) {
                 GamesUiState.Error
             } catch (e: HttpException) {
@@ -48,7 +58,9 @@ class GamesViewModel(private val gamesRepository: GamesRepository) : ViewModel()
             initializer {
                 val application = (this[APPLICATION_KEY] as GamesApplication)
                 val gamesRepository = application.container.gamesRepository
-                GamesViewModel(gamesRepository = gamesRepository)
+                val gameRoomDatabase = application.container.gameRoomDatabase
+                val gameDao = gameRoomDatabase.gameDao()
+                GamesViewModel(gamesRepository = gamesRepository, gameDao = gameDao)
             }
         }
     }

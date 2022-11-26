@@ -8,8 +8,8 @@ import androidx.room.Query
 @Dao
 interface GameDao {
     @Query("SELECT * FROM game")
-    suspend fun getAll(): List<Game>
+    fun getAll(): List<Game>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg games: Game)
+    fun insertAll(vararg games: Game)
 }
