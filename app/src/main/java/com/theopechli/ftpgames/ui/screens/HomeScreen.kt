@@ -2,6 +2,8 @@ package com.theopechli.ftpgames.ui.screens
 
 import android.content.res.Configuration
 import androidx.compose.animation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -73,20 +75,41 @@ fun GamesList(
             GameListItem(
                 game = game,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                { Unit },
+                { Unit },
+                { Unit }
             )
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GameListItem(
     game: Game,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onDoubleClick: () -> Unit
 ) {
     Card(
         elevation = 2.dp,
         modifier = modifier
+            .combinedClickable(
+                onClick = {
+                    /* TODO show game details */
+                    onClick
+                },
+                onLongClick = {
+                    /* TODO copy game url */
+                    onLongClick
+                },
+                onDoubleClick = {
+                    /* TODO open game url in browser */
+                    onDoubleClick
+                }
+            )
     ) {
         Row(
             modifier = Modifier
@@ -146,7 +169,12 @@ fun GamePreview() {
         profileUrl = "https://www.freetogame.com/overwatch-2"
     )
     FtPGamesTheme {
-        GameListItem(game = game)
+        GameListItem(
+            game = game,
+            onClick = { Unit },
+            onLongClick = { Unit },
+            onDoubleClick = { Unit }
+        )
     }
 }
 
