@@ -1,15 +1,13 @@
 package com.theopechli.ftpgames.data
 
 import android.content.Context
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.theopechli.ftpgames.network.GamesApiService
+import com.theopechli.ftpgames.network.FtPGamesApiService
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 interface AppContainer {
-    val gamesRepository: GamesRepository
+    val ftpGamesRepository: FtPGamesRepository
     val gameDatabase: GameDatabase
 }
 
@@ -18,16 +16,16 @@ class DefaultAppContainer(context: Context) : AppContainer {
 
     @ExperimentalSerializationApi
     private val retrofit: Retrofit = Retrofit.Builder()
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(BASE_URL)
         .build()
 
-    private val retrofitService: GamesApiService by lazy {
-        retrofit.create(GamesApiService::class.java)
+    private val retrofitService: FtPGamesApiService by lazy {
+        retrofit.create(FtPGamesApiService::class.java)
     }
 
-    override val gamesRepository: GamesRepository by lazy {
-        DefaultGamesRepository(retrofitService)
+    override val ftpGamesRepository: FtPGamesRepository by lazy {
+        DefaultFtPGamesRepository(retrofitService)
     }
 
     override val gameDatabase: GameDatabase by lazy {

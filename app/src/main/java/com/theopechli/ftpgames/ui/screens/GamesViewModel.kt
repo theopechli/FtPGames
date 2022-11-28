@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.theopechli.ftpgames.GamesApplication
-import com.theopechli.ftpgames.data.GamesRepository
+import com.theopechli.ftpgames.FtPGamesApplication
+import com.theopechli.ftpgames.data.FtPGamesRepository
 import com.theopechli.ftpgames.model.Game
 import com.theopechli.ftpgames.model.GameDao
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ sealed interface GamesUiState {
 }
 
 class GamesViewModel(
-    private val gamesRepository: GamesRepository,
+    private val ftpGamesRepository: FtPGamesRepository,
     private val gameDao: GameDao
 ) : ViewModel() {
     var gamesUiState: GamesUiState by mutableStateOf(GamesUiState.Loading)
@@ -40,7 +40,7 @@ class GamesViewModel(
             var games = gameDao.getAll()
             gamesUiState = try {
                 if (games.isEmpty()) {
-                    games = gamesRepository.getGames()
+                    games = ftpGamesRepository.getGames()
                     gameDao.insertAll(games)
                 }
                 GamesUiState.Success(games)
@@ -55,11 +55,11 @@ class GamesViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as GamesApplication)
-                val gamesRepository = application.container.gamesRepository
+                val application = (this[APPLICATION_KEY] as FtPGamesApplication)
+                val gamesRepository = application.container.ftpGamesRepository
                 val gameDatabase = application.container.gameDatabase
                 val gameDao = gameDatabase.gameDao()
-                GamesViewModel(gamesRepository = gamesRepository, gameDao = gameDao)
+                GamesViewModel(ftpGamesRepository = gamesRepository, gameDao = gameDao)
             }
         }
     }
