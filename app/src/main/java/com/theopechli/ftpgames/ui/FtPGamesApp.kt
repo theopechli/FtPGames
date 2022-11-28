@@ -11,7 +11,7 @@ import com.theopechli.ftpgames.R
 import com.theopechli.ftpgames.ui.screens.GamesViewModel
 
 @Composable
-fun GamesApp() {
+fun FtPGamesApp() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) }
@@ -22,8 +22,7 @@ fun GamesApp() {
                 .padding(it),
             color = MaterialTheme.colors.background
         ) {
-            val gamesViewModel: GamesViewModel =
-                viewModel(factory = GamesViewModel.Factory)
+            val gamesViewModel: GamesViewModel = viewModel(factory = GamesViewModel.Factory)
             HomeScreen(gamesUiState = gamesViewModel.gamesUiState)
         }
     }

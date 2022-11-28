@@ -3,7 +3,7 @@ package com.theopechli.ftpgames
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.theopechli.ftpgames.ui.GamesApp
+import com.theopechli.ftpgames.ui.FtPGamesApp
 import com.theopechli.ftpgames.ui.theme.FtPGamesTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,7 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FtPGamesTheme {
-                GamesApp()
+                FtPGamesApp()
             }
         }
     }
