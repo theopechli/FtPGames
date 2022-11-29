@@ -10,6 +10,12 @@ interface GameDao {
     @Query("SELECT * FROM game")
     suspend fun getAll(): List<Game>
 
+    @Query("DELETE FROM game")
+    suspend fun deleteAll()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(games: List<Game>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(game: Game)
 }

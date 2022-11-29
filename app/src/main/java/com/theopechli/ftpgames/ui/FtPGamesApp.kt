@@ -59,8 +59,8 @@ fun FtPGamesApp(
                 composable(route = FtPGamesScreen.Games.name) {
                     val gamesViewModel: GamesViewModel = viewModel(factory = GamesViewModel.Factory)
                     GamesScreen(
-                        gamesUiState = gamesViewModel.gamesUiState,
-                        navController
+                        gamesViewModel = gamesViewModel,
+                        navController = navController
                     )
                 }
                 composable(

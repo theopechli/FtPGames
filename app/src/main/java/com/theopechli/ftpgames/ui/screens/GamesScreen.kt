@@ -8,7 +8,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,13 +33,13 @@ enum class FtPGamesScreen() {
 
 @Composable
 fun GamesScreen(
-    gamesUiState: GamesUiState,
+    gamesViewModel: GamesViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    when (gamesUiState) {
+    when (gamesViewModel.gamesUiState) {
         is GamesUiState.Loading -> LoadingScreen(modifier)
-        is GamesUiState.Success -> GamesList(gamesUiState.games, navController, modifier)
+        is GamesUiState.Success -> GamesList(gamesViewModel, navController, modifier)
         else -> ErrorScreen(modifier)
     }
 }
@@ -62,30 +65,45 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GamesList(
-    games: List<Game>,
+    gamesViewModel: GamesViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn {
-        items(
-            items = games,
-            key = { game ->
-                game.title
-                game.short_description
-                game.thumbnail
-            }
-        ) { game ->
-            GameListItem(
-                game = game,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                navController = navController,
-                onLongClick = { Unit },
-                onDoubleClick = { Unit }
-            )
+//    var refreshing by remember { mutableStateOf(false) }
+    val refreshing by gamesViewModel.refreshing.collectAsState()
+    val refreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            gamesViewModel.refresh()
         }
+    )
+
+//    var games = (gamesViewModel.gamesUiState as GamesUiState.Success).games
+    val games = remember { mutableStateOf((gamesViewModel.gamesUiState as GamesUiState.Success).games) }
+    Box(Modifier.pullRefresh(refreshState)) {
+        LazyColumn {
+            items(
+                items = games.value,
+                key = { game ->
+                    game.title
+                    game.short_description
+                    game.thumbnail
+                }
+            ) { game ->
+                GameListItem(
+                    game = game,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    navController = navController,
+                    onLongClick = { Unit },
+                    onDoubleClick = { Unit }
+                )
+            }
+        }
+        PullRefreshIndicator(refreshing, refreshState, Modifier.align(Alignment.TopCenter))
     }
 }
 

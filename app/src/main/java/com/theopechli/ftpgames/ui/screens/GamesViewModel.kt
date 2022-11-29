@@ -1,5 +1,6 @@
 package com.theopechli.ftpgames.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,6 +14,9 @@ import com.theopechli.ftpgames.FtPGamesApplication
 import com.theopechli.ftpgames.data.FtPGamesRepository
 import com.theopechli.ftpgames.model.Game
 import com.theopechli.ftpgames.model.GameDao
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -29,26 +33,50 @@ class GamesViewModel(
 ) : ViewModel() {
     var gamesUiState: GamesUiState by mutableStateOf(GamesUiState.Loading)
         private set
+    private val _refreshing = MutableStateFlow(false)
+    val refreshing: StateFlow<Boolean> get() = _refreshing.asStateFlow()
 
     init {
-        getGames(gameDao)
+        getGames()
     }
 
-    private fun getGames(gameDao: GameDao) {
+    private fun getGames() {
         viewModelScope.launch {
+            Log.i("GAME_GET", "Hello")
             gamesUiState = GamesUiState.Loading
-            var games = gameDao.getAll()
+            val games = gameDao.getAll()
+            if (games.size < 5) {
+                getGamesFromRemote()
+            } else {
+                gamesUiState = GamesUiState.Success(games)
+            }
+            Log.i("GAME_GET", "Bye")
+        }
+    }
+
+    private fun getGamesFromRemote() {
+        viewModelScope.launch {
+            Log.i("GAME_GET_REMOTE", "Hello")
+            val games: List<Game>
             gamesUiState = try {
-                if (games.isEmpty()) {
-                    games = ftpGamesRepository.getGames()
-                    gameDao.insertAll(games)
-                }
+                games = ftpGamesRepository.getGames()
+                gameDao.insertAll(games)
                 GamesUiState.Success(games)
             } catch (e: IOException) {
                 GamesUiState.Error
             } catch (e: HttpException) {
                 GamesUiState.Error
             }
+            Log.i("GAME_GET_REMOTE", "Bye")
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _refreshing.emit(true)
+            gamesUiState = GamesUiState.Loading
+            getGamesFromRemote()
+            _refreshing.emit(false)
         }
     }
 
