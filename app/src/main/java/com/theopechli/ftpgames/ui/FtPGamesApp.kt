@@ -19,6 +19,31 @@ import com.theopechli.ftpgames.R
 import com.theopechli.ftpgames.ui.screens.*
 
 @Composable
+fun FtPGamesTopAppBar(
+    canPop: Boolean,
+    navController: NavHostController
+) {
+    /* TODO add about/credits info in menu */
+    TopAppBar(
+        title = { Text(stringResource(R.string.app_name)) },
+        navigationIcon = if (canPop) {
+            {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Navigate back"
+                    )
+                }
+            }
+        } else {
+            null
+        },
+        backgroundColor = MaterialTheme.colors.primary,
+        contentColor = MaterialTheme.colors.onPrimary
+    )
+}
+
+@Composable
 fun FtPGamesApp(
     navController: NavHostController = rememberNavController()
 ) {
@@ -29,20 +54,9 @@ fun FtPGamesApp(
             navController.addOnDestinationChangedListener { controller, _, _ ->
                 canPop = controller.previousBackStackEntry != null
             }
-            TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
-                navigationIcon = if (canPop) {
-                    {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Navigate back"
-                            )
-                        }
-                    }
-                } else {
-                    null
-                }
+            FtPGamesTopAppBar(
+                canPop = canPop,
+                navController = navController
             )
         }
     ) {
@@ -50,7 +64,6 @@ fun FtPGamesApp(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
-            color = MaterialTheme.colors.background
         ) {
             NavHost(
                 navController = navController,

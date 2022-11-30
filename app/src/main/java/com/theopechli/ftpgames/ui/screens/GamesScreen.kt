@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -19,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -39,7 +41,7 @@ fun GamesScreen(
 ) {
     when (gamesViewModel.gamesUiState) {
         is GamesUiState.Loading -> LoadingScreen(modifier)
-        is GamesUiState.Success -> GamesList(gamesViewModel, navController, modifier)
+        is GamesUiState.Success -> GamesList(gamesViewModel, navController)
         else -> ErrorScreen(modifier)
     }
 }
@@ -69,10 +71,8 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
 @Composable
 fun GamesList(
     gamesViewModel: GamesViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ) {
-//    var refreshing by remember { mutableStateOf(false) }
     val refreshing by gamesViewModel.refreshing.collectAsState()
     val refreshState = rememberPullRefreshState(
         refreshing = refreshing,
@@ -80,9 +80,9 @@ fun GamesList(
             gamesViewModel.refresh()
         }
     )
+    val games =
+        remember { mutableStateOf((gamesViewModel.gamesUiState as GamesUiState.Success).games) }
 
-//    var games = (gamesViewModel.gamesUiState as GamesUiState.Success).games
-    val games = remember { mutableStateOf((gamesViewModel.gamesUiState as GamesUiState.Success).games) }
     Box(Modifier.pullRefresh(refreshState)) {
         LazyColumn {
             items(
@@ -98,8 +98,8 @@ fun GamesList(
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     navController = navController,
-                    onLongClick = { Unit },
-                    onDoubleClick = { Unit }
+                    onLongClick = { },
+                    onDoubleClick = { }
                 )
             }
         }
@@ -159,16 +159,21 @@ fun GameListItem(
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = game.title,
-                    style = MaterialTheme.typography.h5
-                )
-                Text(
-                    text = game.short_description,
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+            SelectionContainer {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = game.title,
+                        color = MaterialTheme.colors.primary,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.h5
+                    )
+                    Text(
+                        text = game.short_description,
+                        color = MaterialTheme.colors.primaryVariant,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
             }
         }
     }

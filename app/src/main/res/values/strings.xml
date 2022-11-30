@@ -2,4 +2,6 @@
     <string name="app_name">FtP Games</string>
     <string name="loading">Loading…</string>
     <string name="loading_failed">Loading failed!</string>
+    <string name="genre">GENRE</string>
+    <string name="description">ABOUT THIS GAME</string>
 </resources>
