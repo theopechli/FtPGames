@@ -25,7 +25,12 @@ fun FtPGamesTopAppBar(
 ) {
     /* TODO add about/credits info in menu */
     TopAppBar(
-        title = { Text(stringResource(R.string.app_name)) },
+        title = {
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.h5
+            )
+        },
         navigationIcon = if (canPop) {
             {
                 IconButton(onClick = { navController.popBackStack() }) {

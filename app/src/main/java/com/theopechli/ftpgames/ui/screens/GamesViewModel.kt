@@ -45,6 +45,7 @@ class GamesViewModel(
             Log.i("GAME_GET", "Hello")
             gamesUiState = GamesUiState.Loading
             val games = gameDao.getAll()
+            /* TODO be smart about it */
             if (games.size < 5) {
                 getGamesFromRemote()
             } else {

@@ -164,7 +164,7 @@ fun GameListItem(
                         text = game.title,
                         color = MaterialTheme.colors.primary,
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.h5
+                        style = MaterialTheme.typography.h6
                     )
                     Text(
                         text = game.short_description,

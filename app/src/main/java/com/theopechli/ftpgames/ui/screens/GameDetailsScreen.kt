@@ -36,13 +36,13 @@ fun GameDetailsScreen(
 ) {
     when (gameDetailsUiState) {
         is GameDetailsUiState.Loading -> LoadingScreen(modifier)
-        is GameDetailsUiState.Success -> GameDetails(gameDetailsUiState.game)
+        is GameDetailsUiState.Success -> GameDetailsColumn(gameDetailsUiState.game)
         else -> ErrorScreen(modifier)
     }
 }
 
 @Composable
-fun GameDetails(
+fun GameDetailsColumn(
     gameDetails: GameDetails,
 ) {
     SelectionContainer {
@@ -84,7 +84,6 @@ fun GameDetails(
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = gameDetails.short_description,
-                textAlign = TextAlign.Justify,
                 color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier
@@ -250,6 +249,6 @@ fun GameDetailsPreview() {
         )
     )
     FtPGamesTheme {
-        GameDetails(gameDetails = gameDetails)
+        GameDetailsColumn(gameDetails = gameDetails)
     }
 }

@@ -17,5 +17,5 @@ interface GameDao {
     suspend fun insertAll(games: List<Game>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(game: Game)
+    suspend fun insertGame(game: Game)
 }
