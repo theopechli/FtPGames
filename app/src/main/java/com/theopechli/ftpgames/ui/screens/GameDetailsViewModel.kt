@@ -13,12 +13,15 @@ import com.theopechli.ftpgames.FtPGamesApplication
 import com.theopechli.ftpgames.data.FtPGamesRepository
 import com.theopechli.ftpgames.model.GameDetails
 import com.theopechli.ftpgames.model.GameDetailsDao
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface GameDetailsUiState {
-    data class Success(val game: GameDetails) : GameDetailsUiState
+    data class Success(val gameDetails: GameDetails) : GameDetailsUiState
     object Error : GameDetailsUiState
     object Loading : GameDetailsUiState
 }
@@ -28,8 +31,12 @@ class GameDetailsViewModel(
     private val ftpGamesRepository: FtPGamesRepository,
     private val gameDetailsDao: GameDetailsDao
 ) : ViewModel() {
+
     var gameDetailsUiState: GameDetailsUiState by mutableStateOf(GameDetailsUiState.Loading)
         private set
+
+    private val _refreshing = MutableStateFlow(false)
+    val refreshing: StateFlow<Boolean> get() = _refreshing.asStateFlow()
 
     init {
         getGameDetails(id)
@@ -63,6 +70,15 @@ class GameDetailsViewModel(
                 GameDetailsUiState.Error
             }
             Log.i("GAME_GET_DETAILS_REMOTE", "Bye")
+        }
+    }
+
+    fun refresh(id: Long) {
+        viewModelScope.launch {
+            _refreshing.emit(true)
+            gameDetailsUiState = GameDetailsUiState.Loading
+            getGameDetailsFromRemote(id)
+            _refreshing.emit(false)
         }
     }
 

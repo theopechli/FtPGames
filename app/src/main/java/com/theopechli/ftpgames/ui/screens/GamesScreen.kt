@@ -1,5 +1,6 @@
 package com.theopechli.ftpgames.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -21,12 +22,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.theopechli.ftpgames.R
 import com.theopechli.ftpgames.model.Game
+import com.theopechli.ftpgames.ui.theme.FtPGamesTheme
 
 enum class FtPGamesScreen {
     Games,
@@ -71,7 +74,7 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
 @Composable
 fun GamesList(
     gamesViewModel: GamesViewModel,
-    navController: NavController
+    navController: NavController?
 ) {
     val refreshing by gamesViewModel.refreshing.collectAsState()
     val refreshState = rememberPullRefreshState(
@@ -112,7 +115,7 @@ fun GamesList(
 fun GameListItem(
     game: Game,
     modifier: Modifier = Modifier,
-    navController: NavController,
+    navController: NavController?,
     onLongClick: () -> Unit,
     onDoubleClick: () -> Unit
 ) {
@@ -121,7 +124,7 @@ fun GameListItem(
         modifier = modifier
             .combinedClickable(
                 onClick = {
-                    navController.navigate(FtPGamesScreen.GameDetails.name + "/${game.id}")
+                    navController?.navigate(FtPGamesScreen.GameDetails.name + "/${game.id}")
                 },
                 onLongClick = {
                     /* TODO copy game url */
@@ -178,56 +181,58 @@ fun GameListItem(
     }
 }
 
+@Preview("Light Theme")
+@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun GamePreview() {
+    val game = Game(
+        id = 540,
+        title = "Overwatch 2",
+        thumbnail = "https://www.freetogame.com/g/540/thumbnail.jpg",
+        short_description = "A hero-focused first-person team shooter from Blizzard Entertainment.",
+        game_url = "https://www.freetogame.com/open/overwatch-2",
+        genre = "Shooter",
+        platform = "PC (Windows)",
+        publisher = "Activision Blizzard",
+        developer = "Blizzard Entertainment",
+        release_date = "2022-10-04",
+        freetogame_profile_url = "https://www.freetogame.com/overwatch-2"
+    )
+    FtPGamesTheme {
+        GameListItem(
+            game = game,
+            navController = null,
+            onLongClick = { },
+            onDoubleClick = { }
+        )
+    }
+}
+
 //@Preview("Light Theme")
 //@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 //@Composable
-//fun GamePreview() {
-//    val game = Game(
-//        id = 540,
-//        title = "Overwatch 2",
-//        thumbnail = "https://www.freetogame.com/g/540/thumbnail.jpg",
-//        shortDescription = "A hero-focused first-person team shooter from Blizzard Entertainment.",
-//        gameUrl = "https://www.freetogame.com/open/overwatch-2",
-//        genre = "Shooter",
-//        platform = "PC (Windows)",
-//        publisher = "Activision Blizzard",
-//        developer = "Blizzard Entertainment",
-//        releaseDate = "2022-10-04",
-//        profileUrl = "https://www.freetogame.com/overwatch-2"
-//    )
-//    FtPGamesTheme {
-//        GameListItem(
-//            game = game,
-//            onClick = { Unit },
-//            onLongClick = { Unit },
-//            onDoubleClick = { Unit }
-//        )
-//    }
-//}
-//
-//@Preview("Games List")
-//@Composable
 //fun GamesPreview() {
-//    FtPGamesTheme(darkTheme = false) {
+//    FtPGamesTheme() {
 //        val mockData = List(10) {
 //            Game(
-//                id = it,
+//                id = it.toLong(),
 //                title = "$it Overwatch 2",
 //                thumbnail = "$it https://www.freetogame.com/g/540/thumbnail.jpg",
-//                shortDescription = "$it A hero-focused first-person team shooter from Blizzard Entertainment.",
-//                gameUrl = "$it https://www.freetogame.com/open/overwatch-2",
+//                short_description = "$it A hero-focused first-person team shooter from Blizzard Entertainment.",
+//                game_url = "$it https://www.freetogame.com/open/overwatch-2",
 //                genre = "$it Shooter",
 //                platform = "$it PC (Windows)",
 //                publisher = "$it Activision Blizzard",
 //                developer = "$it Blizzard Entertainment",
-//                releaseDate = "$it 2022-10-04",
-//                profileUrl = "$it https://www.freetogame.com/overwatch-2"
+//                release_date = "$it 2022-10-04",
+//                freetogame_profile_url = "$it https://www.freetogame.com/overwatch-2"
 //            )
 //        }
 //        Surface(
 //            color = MaterialTheme.colors.background
 //        ) {
-//            GamesList(games = mockData, { Unit })
+//            val gamesViewModel: GamesViewModel = viewModel(factory = GamesViewModel.Factory)
+//            GamesList(gamesViewModel = gamesViewModel, navController = null)
 //        }
 //    }
 //}

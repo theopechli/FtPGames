@@ -31,8 +31,10 @@ class GamesViewModel(
     private val ftpGamesRepository: FtPGamesRepository,
     private val gameDao: GameDao
 ) : ViewModel() {
+
     var gamesUiState: GamesUiState by mutableStateOf(GamesUiState.Loading)
         private set
+
     private val _refreshing = MutableStateFlow(false)
     val refreshing: StateFlow<Boolean> get() = _refreshing.asStateFlow()
 

@@ -88,7 +88,7 @@ fun FtPGamesApp(
                     val id = backStackEntry.arguments?.getLong("id")
                     val gameDetailsViewModel: GameDetailsViewModel =
                         viewModel(factory = id?.let { it1 -> GameDetailsViewModel.Factory(it1) })
-                    GameDetailsScreen(gameDetailsUiState = gameDetailsViewModel.gameDetailsUiState)
+                    GameDetailsScreen(gameDetailsViewModel = gameDetailsViewModel)
                 }
             }
 

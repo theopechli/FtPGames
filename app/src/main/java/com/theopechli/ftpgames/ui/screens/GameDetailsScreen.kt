@@ -7,9 +7,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -21,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.theopechli.ftpgames.R
@@ -31,69 +37,90 @@ import com.theopechli.ftpgames.ui.theme.FtPGamesTheme
 
 @Composable
 fun GameDetailsScreen(
-    gameDetailsUiState: GameDetailsUiState,
+    gameDetailsViewModel: GameDetailsViewModel,
     modifier: Modifier = Modifier
 ) {
-    when (gameDetailsUiState) {
+    when (gameDetailsViewModel.gameDetailsUiState) {
         is GameDetailsUiState.Loading -> LoadingScreen(modifier)
-        is GameDetailsUiState.Success -> GameDetailsColumn(gameDetailsUiState.game)
+        is GameDetailsUiState.Success -> GameDetailsColumn(gameDetailsViewModel)
         else -> ErrorScreen(modifier)
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GameDetailsColumn(
-    gameDetails: GameDetails,
+    gameDetailsViewModel: GameDetailsViewModel
 ) {
-    SelectionContainer {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            BoxWithImage(
-                gameDetails.title,
-                gameDetails.thumbnail
+    val gameDetails =
+        remember {
+            mutableStateOf(
+                (gameDetailsViewModel.gameDetailsUiState as GameDetailsUiState.Success)
+                    .gameDetails
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = gameDetails.title,
-                color = MaterialTheme.colors.primary,
-                style = MaterialTheme.typography.h4,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
-
-            )
-            /* TODO onClick visit all games by the developer */
-            RowWithTwoTexts(
-                key = "Developer",
-                value = gameDetails.developer,
-                color = MaterialTheme.colors.primary
-            )
-            RowWithTwoTexts(
-                key = "Publisher",
-                value = gameDetails.publisher,
-                color = MaterialTheme.colors.primary
-            )
-            RowWithTwoTexts(
-                key = "Released",
-                value = gameDetails.release_date,
-                color = MaterialTheme.colors.onBackground
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = gameDetails.short_description,
-                color = MaterialTheme.colors.onBackground,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier
-                    .padding(8.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            GenreText(genre = gameDetails.genre)
-            Spacer(modifier = Modifier.height(32.dp))
-            DescriptionText(description = gameDetails.description)
         }
+
+    val refreshing by gameDetailsViewModel.refreshing.collectAsState()
+    val refreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            gameDetailsViewModel.refresh(gameDetails.value.id)
+        }
+    )
+
+    Box(Modifier.pullRefresh(refreshState)) {
+        SelectionContainer {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+                    .pullRefresh(refreshState)
+            ) {
+                BoxWithImage(
+                    gameDetails.value.title,
+                    gameDetails.value.thumbnail
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = gameDetails.value.title,
+                    color = MaterialTheme.colors.primary,
+                    style = MaterialTheme.typography.h4,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(16.dp)
+
+                )
+                /* TODO onClick visit all games by the developer */
+                RowWithTwoTexts(
+                    key = "Developer",
+                    value = gameDetails.value.developer,
+                    color = MaterialTheme.colors.primary
+                )
+                RowWithTwoTexts(
+                    key = "Publisher",
+                    value = gameDetails.value.publisher,
+                    color = MaterialTheme.colors.primary
+                )
+                RowWithTwoTexts(
+                    key = "Released",
+                    value = gameDetails.value.release_date,
+                    color = MaterialTheme.colors.onBackground
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = gameDetails.value.short_description,
+                    color = MaterialTheme.colors.onBackground,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier
+                        .padding(8.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                GenreText(genre = gameDetails.value.genre)
+                Spacer(modifier = Modifier.height(32.dp))
+                DescriptionText(description = gameDetails.value.description)
+            }
+        }
+        PullRefreshIndicator(refreshing, refreshState, Modifier.align(Alignment.TopCenter))
     }
 }
 
@@ -249,6 +276,8 @@ fun GameDetailsPreview() {
         )
     )
     FtPGamesTheme {
-        GameDetailsColumn(gameDetails = gameDetails)
+        val gameDetailsViewModel: GameDetailsViewModel =
+            viewModel(factory = gameDetails.id.let { it1 -> GameDetailsViewModel.Factory(it1) })
+        GameDetailsScreen(gameDetailsViewModel = gameDetailsViewModel)
     }
 }
