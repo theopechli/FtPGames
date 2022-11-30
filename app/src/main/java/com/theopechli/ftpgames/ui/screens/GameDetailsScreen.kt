@@ -129,23 +129,21 @@ fun RowWithTwoTexts(
     value: String,
     color: Color
 ) {
-    Column {
-        Row {
-            Text(
-                text = key,
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.primaryVariant,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.weight(0.5f)
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.h5,
-                color = color,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.weight(1f)
-            )
-        }
+    Row {
+        Text(
+            text = key,
+            style = MaterialTheme.typography.h5,
+            color = MaterialTheme.colors.primaryVariant,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.weight(0.5f)
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.h5,
+            color = color,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 

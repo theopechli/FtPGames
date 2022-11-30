@@ -28,7 +28,7 @@ import coil.request.ImageRequest
 import com.theopechli.ftpgames.R
 import com.theopechli.ftpgames.model.Game
 
-enum class FtPGamesScreen() {
+enum class FtPGamesScreen {
     Games,
     GameDetails
 }
@@ -121,7 +121,6 @@ fun GameListItem(
         modifier = modifier
             .combinedClickable(
                 onClick = {
-                    /* TODO show game details */
                     navController.navigate(FtPGamesScreen.GameDetails.name + "/${game.id}")
                 },
                 onLongClick = {
