@@ -1,7 +1,25 @@
 <resources>
     <string name="app_name">FtP Games</string>
+    <string name="app_description">Android application that allows users to search Free to Play games which are available on PC and web browsers.</string>
+    <string name="copyright">© 2022 Theofilos Pechlivanis</string>
+    <string name="credits">Credits</string>
+    <string name="free_to_game">FreeToGame</string>
+    <string name="free_to_game_credits">FreeToGame.com is a gaming platform that also provides an API to access their Games Database. All data used in this application is retrieved through their API service.</string>
+    <string name="source_code">Source code</string>
+    <string name="code_icon">Code icon</string>
+    <string name="bug_report">Report a bug</string>
+    <string name="bug_report_icon">Bug report icon</string>
+    <string name="website">Website</string>
+    <string name="website_icon">Website icon</string>
+    <string name="source_code_url">https://github.com/theopechli/FtPGames</string>
+    <string name="bug_report_url">https://github.com/theopechli/FtPGames/issues</string>
+    <string name="website_url">https://www.freetogame.com</string>
+    <string name="games">Games</string>
+    <string name="game_details">Game details</string>
+    <string name="about">About</string>
     <string name="loading">Loading…</string>
     <string name="loading_failed">Loading failed!</string>
     <string name="genre">GENRE</string>
-    <string name="description">ABOUT THIS GAME</string>
+    <string name="game_description">ABOUT THIS GAME</string>
+    <string name="icon">%s icon</string>
 </resources>

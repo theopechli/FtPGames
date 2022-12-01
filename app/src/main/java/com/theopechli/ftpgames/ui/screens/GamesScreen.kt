@@ -1,6 +1,7 @@
 package com.theopechli.ftpgames.ui.screens
 
 import android.content.res.Configuration
+import androidx.annotation.StringRes
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -18,22 +19,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.theopechli.ftpgames.R
 import com.theopechli.ftpgames.model.Game
 import com.theopechli.ftpgames.ui.theme.FtPGamesTheme
 
-enum class FtPGamesScreen {
-    Games,
-    GameDetails
+sealed class Screen(val route: String, @StringRes val resourceId: Int) {
+    object FtPGames : Screen("games", R.string.games)
+    object FtPGameDetails : Screen("gamedetails", R.string.game_details)
+    object FtPAbout : Screen("about", R.string.about)
 }
 
 @Composable
@@ -124,7 +122,7 @@ fun GameListItem(
         modifier = modifier
             .combinedClickable(
                 onClick = {
-                    navController?.navigate(FtPGamesScreen.GameDetails.name + "/${game.id}")
+                    navController?.navigate(Screen.FtPGameDetails.route + "/${game.id}")
                 },
                 onLongClick = {
                     /* TODO copy game url */
@@ -142,24 +140,15 @@ fun GameListItem(
                 .padding(16.dp)
                 .sizeIn(minHeight = 72.dp)
         ) {
-            Box(
-                modifier = Modifier
+            BoxWithImage(
+                contentDescription = game.title,
+                icon = game.thumbnail,
+                boxModifier = Modifier
                     .size(128.dp)
-                    .clip(RoundedCornerShape(2.dp))
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(game.thumbnail)
-                        .crossfade(true)
-                        .build(),
-                    error = painterResource(R.drawable.ic_launcher_foreground),
-                    placeholder = painterResource(R.drawable.ic_launcher_foreground),
-                    contentDescription = "${game.title} thumbnail",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                )
-            }
+                    .clip(RoundedCornerShape(2.dp)),
+                imageModifier = Modifier.aspectRatio(1f),
+                contentScale = ContentScale.Fit
+            )
             Spacer(modifier = Modifier.width(16.dp))
             SelectionContainer {
                 Column(modifier = Modifier.weight(1f)) {

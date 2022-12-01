@@ -79,7 +79,13 @@ fun GameDetailsColumn(
             ) {
                 BoxWithImage(
                     gameDetails.value.title,
-                    gameDetails.value.thumbnail
+                    gameDetails.value.thumbnail,
+                    boxModifier = Modifier
+                        .clip(RoundedCornerShape(4.dp)),
+                    imageModifier = Modifier
+                        .aspectRatio(16f / 9f)
+                        .fillMaxWidth(),
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -126,25 +132,25 @@ fun GameDetailsColumn(
 
 @Composable
 fun BoxWithImage(
-    title: String,
-    thumbnail: String
+    contentDescription: String,
+    icon: String,
+    boxModifier: Modifier,
+    imageModifier: Modifier,
+    contentScale: ContentScale
 ) {
     Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
+        modifier = boxModifier
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(thumbnail)
+                .data(icon)
                 .crossfade(true)
                 .build(),
             error = painterResource(R.drawable.ic_launcher_foreground),
             placeholder = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = "$title thumbnail",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .aspectRatio(16f / 9f)
-                .fillMaxWidth()
+            contentDescription = stringResource(R.string.icon, contentDescription),
+            contentScale = contentScale,
+            modifier = imageModifier
         )
     }
 }
@@ -193,7 +199,7 @@ fun GenreText(genre: String) {
 @Composable
 fun DescriptionText(description: String) {
     Text(
-        text = stringResource(id = R.string.description),
+        text = stringResource(id = R.string.game_description),
         color = MaterialTheme.colors.secondary,
         style = MaterialTheme.typography.h5
     )
@@ -211,8 +217,14 @@ fun DescriptionText(description: String) {
 fun BoxWithImagePreview() {
     FtPGamesTheme {
         BoxWithImage(
-            title = "Call Of Duty: Warzone",
-            thumbnail = "https://www.freetogame.com/g/452/thumbnail.jpg"
+            contentDescription = "Call Of Duty: Warzone",
+            icon = "https://www.freetogame.com/g/452/thumbnail.jpg",
+            boxModifier = Modifier
+                .clip(RoundedCornerShape(4.dp)),
+            imageModifier = Modifier
+                .aspectRatio(16f / 9f)
+                .fillMaxWidth(),
+            contentScale = ContentScale.Crop
         )
     }
 }
