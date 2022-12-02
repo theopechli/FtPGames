@@ -65,7 +65,10 @@ fun FtpGamesBottomNavBar(
     navController: NavHostController,
     currentDestination: NavDestination?
 ) {
-    BottomNavigation {
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colors.primary,
+        contentColor = MaterialTheme.colors.onPrimary,
+    ) {
         BottomNavigationItem(
             icon = { Icon(Icons.Filled.Home, contentDescription = "Home icon") },
             label = { Text(stringResource(Screen.FtPGames.resourceId)) },

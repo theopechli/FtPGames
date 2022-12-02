@@ -31,7 +31,10 @@ import com.theopechli.ftpgames.ui.theme.FtPGamesTheme
 @Composable
 fun AboutScreen() {
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .background(MaterialTheme.colors.surface)
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         InfoScreen()
         RowWithButtons()
@@ -111,7 +114,7 @@ fun InfoScreen() {
             modifier = Modifier
                 .padding(16.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colors.onSecondary)
+                .background(MaterialTheme.colors.background)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -210,7 +213,7 @@ fun CreditsScreen() {
             modifier = Modifier
                 .padding(16.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colors.onSecondary)
+                .background(MaterialTheme.colors.background)
                 .fillMaxSize()
         ) {
             Text(
