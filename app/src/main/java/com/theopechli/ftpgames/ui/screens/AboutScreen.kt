@@ -73,11 +73,6 @@ fun RowWithButtons() {
             .padding(8.dp)
     ) {
         Button(
-            elevation = ButtonDefaults.elevation(
-                defaultElevation = 10.dp,
-                pressedElevation = 15.dp,
-                disabledElevation = 0.dp
-            ),
             onClick = {
                 uriHandler.openUri(sourceCodeUrl)
             }
@@ -89,11 +84,6 @@ fun RowWithButtons() {
             )
         }
         Button(
-            elevation = ButtonDefaults.elevation(
-                defaultElevation = 10.dp,
-                pressedElevation = 15.dp,
-                disabledElevation = 0.dp
-            ),
             onClick = {
                 uriHandler.openUri(bugReportUrl)
             }
@@ -186,11 +176,6 @@ fun ColumnWithTwoTextsAndImage(
         Spacer(modifier = Modifier.height(8.dp))
         Button(
             modifier = Modifier.padding(start = 8.dp),
-            elevation = ButtonDefaults.elevation(
-                defaultElevation = 10.dp,
-                pressedElevation = 15.dp,
-                disabledElevation = 0.dp
-            ),
             onClick = {
                 uriHandler.openUri(websiteUrl)
             }

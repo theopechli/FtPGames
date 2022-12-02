@@ -115,7 +115,7 @@ fun GameDetailsColumn(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = gameDetails.value.title,
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colors.onPrimary,
                     style = MaterialTheme.typography.h4,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(16.dp)
@@ -125,12 +125,12 @@ fun GameDetailsColumn(
                 RowWithTwoTexts(
                     key = "Developer",
                     value = gameDetails.value.developer,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colors.secondary
                 )
                 RowWithTwoTexts(
                     key = "Publisher",
                     value = gameDetails.value.publisher,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colors.secondary
                 )
                 RowWithTwoTexts(
                     key = "Released",

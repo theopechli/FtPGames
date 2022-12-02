@@ -155,7 +155,7 @@ fun GameListItem(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = game.title,
-                        color = MaterialTheme.colors.primary,
+                        color = MaterialTheme.colors.onPrimary,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.h6
                     )
