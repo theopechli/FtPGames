@@ -110,7 +110,7 @@ fun GameDetailsColumn(
                     imageModifier = Modifier
                         .aspectRatio(16f / 9f)
                         .fillMaxWidth(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.FillBounds
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
