@@ -167,14 +167,14 @@ fun RowWithTwoTexts(
             style = MaterialTheme.typography.h5,
             color = MaterialTheme.colors.primaryVariant,
             textAlign = TextAlign.Start,
-            modifier = Modifier.weight(0.6f)
+            modifier = Modifier.width(128.dp)
         )
         Text(
             text = value,
             style = MaterialTheme.typography.h5,
             color = color,
             textAlign = TextAlign.Start,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
