@@ -1,7 +1,6 @@
 package com.theopechli.ftpgames.ui
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -10,7 +9,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -31,10 +32,16 @@ fun FtPGamesTopAppBar(
     /* TODO add about/credits info in menu */
     TopAppBar(
         title = {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.h5
-            )
+            Row(
+                horizontalArrangement = if (!canPop) Arrangement.Center else Arrangement.Start,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         },
         navigationIcon = if (canPop) {
             {
@@ -54,16 +61,19 @@ fun FtPGamesTopAppBar(
 }
 
 @Composable
-fun FtpGamesBottomNavBar(navController: NavHostController) {
+fun FtpGamesBottomNavBar(
+    navController: NavHostController,
+    currentDestination: NavDestination?
+) {
     BottomNavigation {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
-
         BottomNavigationItem(
             icon = { Icon(Icons.Filled.Home, contentDescription = "Home icon") },
             label = { Text(stringResource(Screen.FtPGames.resourceId)) },
             selected = currentDestination?.hierarchy
-                ?.any { it.route == Screen.FtPGames.route } == true,
+                ?.any {
+                    (it.route == Screen.FtPGames.route
+                            || it.route == Screen.FtPGameDetails.route + "/{id}")
+                } == true,
             onClick = {
                 navController.navigate(Screen.FtPGames.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
@@ -82,7 +92,8 @@ fun FtpGamesBottomNavBar(navController: NavHostController) {
                 )
             },
             label = { Text(stringResource(Screen.FtPAbout.resourceId)) },
-            selected = currentDestination?.hierarchy?.any { it.route == Screen.FtPAbout.route } == true,
+            selected = currentDestination?.hierarchy
+                ?.any { it.route == Screen.FtPAbout.route } == true,
             onClick = {
                 navController.navigate(Screen.FtPAbout.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
@@ -97,53 +108,71 @@ fun FtpGamesBottomNavBar(navController: NavHostController) {
 }
 
 @Composable
+fun NavigationGraph(navController: NavHostController, id: Long?) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.FtPGames.route
+    ) {
+        composable(route = Screen.FtPGames.route) {
+            val gamesViewModel: GamesViewModel = viewModel(factory = GamesViewModel.Factory)
+            GamesScreen(
+                gamesViewModel = gamesViewModel,
+                navController = navController
+            )
+        }
+        composable(
+            route = Screen.FtPGameDetails.route + "/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) {
+            val gameDetailsViewModel: GameDetailsViewModel =
+                viewModel(factory = id?.let { it1 -> GameDetailsViewModel.Factory(it1) })
+            GameDetailsScreen(gameDetailsViewModel = gameDetailsViewModel)
+        }
+        composable(route = Screen.FtPAbout.route) {
+            AboutScreen()
+        }
+    }
+}
+
+@Composable
 fun FtPGamesApp(
     navController: NavHostController = rememberNavController()
 ) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val id = navBackStackEntry?.arguments?.getLong("id")
+
+    var canPop by remember { mutableStateOf(false) }
+    navController.addOnDestinationChangedListener { controller, _, _ ->
+        canPop = (controller.previousBackStackEntry != null)
+                && (controller.currentDestination?.hierarchy
+            ?.any { it.route == Screen.FtPAbout.route } == false)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            var canPop by remember { mutableStateOf(false) }
-            navController.addOnDestinationChangedListener { controller, _, _ ->
-                canPop = controller.previousBackStackEntry != null
-            }
             FtPGamesTopAppBar(
                 canPop = canPop,
                 navController = navController
             )
         },
-        bottomBar = { FtpGamesBottomNavBar(navController = navController) }
+        bottomBar = {
+            FtpGamesBottomNavBar(
+                navController = navController,
+                currentDestination = currentDestination
+            )
+        }
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
         ) {
-            NavHost(
+            NavigationGraph(
                 navController = navController,
-                startDestination = Screen.FtPGames.route
-            ) {
-                composable(route = Screen.FtPGames.route) {
-                    val gamesViewModel: GamesViewModel = viewModel(factory = GamesViewModel.Factory)
-                    GamesScreen(
-                        gamesViewModel = gamesViewModel,
-                        navController = navController
-                    )
-                }
-                composable(
-                    route = Screen.FtPGameDetails.route + "/{id}",
-                    arguments = listOf(navArgument("id") { type = NavType.LongType })
-                ) { backStackEntry ->
-                    val id = backStackEntry.arguments?.getLong("id")
-                    val gameDetailsViewModel: GameDetailsViewModel =
-                        viewModel(factory = id?.let { it1 -> GameDetailsViewModel.Factory(it1) })
-                    GameDetailsScreen(gameDetailsViewModel = gameDetailsViewModel)
-                }
-                composable(route = Screen.FtPAbout.route) {
-                    AboutScreen()
-                }
-            }
-
+                id = id
+            )
         }
     }
 }
