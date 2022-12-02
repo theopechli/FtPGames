@@ -47,6 +47,31 @@ fun GameDetailsScreen(
     }
 }
 
+@Composable
+fun BoxWithImage(
+    contentDescription: String,
+    icon: String,
+    boxModifier: Modifier,
+    imageModifier: Modifier,
+    contentScale: ContentScale
+) {
+    Box(
+        modifier = boxModifier
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(icon)
+                .crossfade(true)
+                .build(),
+            error = painterResource(R.drawable.ic_launcher_foreground),
+            placeholder = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = stringResource(R.string.icon, contentDescription),
+            contentScale = contentScale,
+            modifier = imageModifier
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GameDetailsColumn(
@@ -127,31 +152,6 @@ fun GameDetailsColumn(
             }
         }
         PullRefreshIndicator(refreshing, refreshState, Modifier.align(Alignment.TopCenter))
-    }
-}
-
-@Composable
-fun BoxWithImage(
-    contentDescription: String,
-    icon: String,
-    boxModifier: Modifier,
-    imageModifier: Modifier,
-    contentScale: ContentScale
-) {
-    Box(
-        modifier = boxModifier
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(context = LocalContext.current)
-                .data(icon)
-                .crossfade(true)
-                .build(),
-            error = painterResource(R.drawable.ic_launcher_foreground),
-            placeholder = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = stringResource(R.string.icon, contentDescription),
-            contentScale = contentScale,
-            modifier = imageModifier
-        )
     }
 }
 
