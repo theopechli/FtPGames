@@ -1,6 +1,5 @@
 package com.theopechli.ftpgames.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -44,7 +43,6 @@ class GameDetailsViewModel(
 
     private fun getGameDetails(id: Long) {
         viewModelScope.launch {
-            Log.i("GAME_GET_DETAILS", "Hello")
             gameDetailsUiState = GameDetailsUiState.Loading
             val gameDetails = gameDetailsDao.getGameDetails(id)
             if (gameDetails != null) {
@@ -52,13 +50,11 @@ class GameDetailsViewModel(
             } else {
                 getGameDetailsFromRemote(id)
             }
-            Log.i("GAME_GET_DETAILS", "Bye")
         }
     }
 
     private fun getGameDetailsFromRemote(id: Long) {
         viewModelScope.launch {
-            Log.i("GAME_GET_DETAILS_REMOTE", "Hello")
             val gameDetails: GameDetails
             gameDetailsUiState = try {
                 gameDetails = ftpGamesRepository.getGameById(id)
@@ -69,7 +65,6 @@ class GameDetailsViewModel(
             } catch (e: HttpException) {
                 GameDetailsUiState.Error
             }
-            Log.i("GAME_GET_DETAILS_REMOTE", "Bye")
         }
     }
 

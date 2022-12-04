@@ -48,7 +48,7 @@ fun FtPGamesTopAppBar(
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Navigate back"
+                        contentDescription = "Navigate back icon"
                     )
                 }
             }
