@@ -11,16 +11,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavDestination
+import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.theopechli.ftpgames.R
 import com.theopechli.ftpgames.ui.screens.*
 
@@ -29,7 +26,6 @@ fun FtPGamesTopAppBar(
     canPop: Boolean,
     navController: NavHostController
 ) {
-    /* TODO add about/credits info in menu */
     TopAppBar(
         title = {
             Row(
@@ -37,7 +33,12 @@ fun FtPGamesTopAppBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.app_name),
+                    text = when (navController.currentDestination?.route) {
+                        Screen.FtPGames.route -> stringResource(id = Screen.FtPGames.resourceId)
+                        Screen.FtPGameDetails.route -> stringResource(id = Screen.FtPGameDetails.resourceId)
+                        Screen.FtPAbout.route -> stringResource(id = Screen.FtPAbout.resourceId)
+                        else -> stringResource(id = R.string.app_name)
+                    },
                     style = MaterialTheme.typography.h6,
                     fontWeight = FontWeight.Bold
                 )
